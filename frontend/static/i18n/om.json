@@ -1,0 +1,21 @@
+{
+ "tab.text": "Barruu",
+ "tab.voice": "Sagalee",
+ "tab.camera": "Kaameraa",
+ "tab.call": "Waamicha viidiyoo",
+ "tab.docs": "Sanadoota",
+ "tab.history": "Seenaa",
+ "tab.about": "Waa'ee",
+ "lang.from": "Irraa",
+ "lang.to": "Gara",
+ "text.translate": "Hiiki",
+ "text.clear": "Haqi",
+ "text.copy": "Waraabi",
+ "text.share": "Qoodi",
+ "account.sign_in": "Seeni",
+ "account.sign_out": "Ba'i",
+ "account.username": "Maqaa fayyadamaa",
+ "account.cancel": "Haqi",
+ "net.online": "Toora interneetii irra",
+ "net.offline": "Toora interneetii alaa"
+}

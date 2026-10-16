@@ -1,0 +1,18 @@
+fastapi>=0.110,<1.0
+uvicorn[standard]>=0.29,<1.0
+pydantic>=2.6,<3.0
+# Server-side voice fallback (Windows system voices):
+pyttsx3>=2.90; sys_platform == "win32"
+# Optional REAL translation model (large; see README):
+# transformers>=4.40
+# torch>=2.2
+# sentencepiece>=0.2
+# Optional REAL camera OCR (also install the Tesseract program, see README):
+# pytesseract>=0.3.10
+# pillow>=10.0
+# Optional features:
+# pypdf>=4.0            (PDF translation)
+# pytesseract>=0.3.10    (camera OCR; also install the Tesseract program)
+# pillow>=10.0
+# numpy>=1.26            (server speech / subtitles)
+# cryptography>=42       (scripts/make_dev_cert.py)

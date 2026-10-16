@@ -1,0 +1,6 @@
+# Optional extras (install only what you need):  python -m pip install -r requirements-optional.txt
+pypdf>=4.0              # translate PDF files
+pillow>=10.0            # camera / photo handling
+pytesseract>=0.3.10     # camera OCR (ALSO install the Tesseract program, see README)
+numpy>=1.26             # server speech recognition / subtitles
+cryptography>=42        # scripts/make_dev_cert.py (HTTPS for phones)

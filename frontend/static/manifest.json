@@ -1,0 +1,55 @@
+{
+ "name": "Universal Translator",
+ "short_name": "Translator",
+ "description": "Translate text, voice, photos, documents and video calls in 150+ languages.",
+ "start_url": "/",
+ "scope": "/",
+ "display": "standalone",
+ "background_color": "#4f46e5",
+ "theme_color": "#4f46e5",
+ "icons": [
+  {
+   "src": "/static/icons/icon-192.png",
+   "sizes": "192x192",
+   "type": "image/png"
+  },
+  {
+   "src": "/static/icons/icon-512.png",
+   "sizes": "512x512",
+   "type": "image/png",
+   "purpose": "any maskable"
+  },
+  {
+   "src": "/static/icons/icon.svg",
+   "sizes": "any",
+   "type": "image/svg+xml"
+  }
+ ],
+ "share_target": {
+  "action": "/",
+  "method": "GET",
+  "params": {
+   "title": "title",
+   "text": "text",
+   "url": "url"
+  }
+ },
+ "shortcuts": [
+  {
+   "name": "Voice",
+   "url": "/?tab=voice"
+  },
+  {
+   "name": "Camera",
+   "url": "/?tab=camera"
+  },
+  {
+   "name": "Video call",
+   "url": "/?tab=call"
+  },
+  {
+   "name": "Documents",
+   "url": "/?tab=docs"
+  }
+ ]
+}

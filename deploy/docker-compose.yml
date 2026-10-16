@@ -1,0 +1,71 @@
+# Public deployment: the app + automatic HTTPS (Caddy) + a TURN relay (coturn) so calls work
+# between different networks. Run from this folder:   docker compose up -d --build
+# UNVERIFIED: written without Docker available. Read deploy/README.md first.
+services:
+  app:
+    build: ..
+    restart: unless-stopped
+    environment:
+      TRANSLATION_PROVIDER: ${TRANSLATION_PROVIDER:-mock}
+      ACCESS_CODE: ${ACCESS_CODE:?Set ACCESS_CODE in deploy/.env (the app is public, it must not be open)}
+      ALLOWED_ORIGINS: https://${DOMAIN:?Set DOMAIN in deploy/.env}
+      STUN_URLS: stun:${DOMAIN}:3478
+      TURN_URLS: turn:${DOMAIN}:3478?transport=udp,turn:${DOMAIN}:3478?transport=tcp
+      TURN_SECRET: ${TURN_SECRET:?Set TURN_SECRET in deploy/.env}
+      TURN_TTL: 3600
+      MAX_PARTICIPANTS: ${MAX_PARTICIPANTS:-4}
+      AUTH_MODE: ${AUTH_MODE:-off}
+      TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:-}
+      TELEGRAM_WEBHOOK_SECRET: ${TELEGRAM_WEBHOOK_SECRET:-}
+    volumes:
+      - app-data:/app/data
+    expose:
+      - "8000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      - app
+
+  coturn:
+    image: coturn/coturn:latest
+    restart: unless-stopped
+    network_mode: host            # a relay needs a range of real UDP ports, so it uses the host network
+    command:
+      - -n
+      - --log-file=stdout
+      - --realm=${DOMAIN}
+      - --use-auth-secret
+      - --static-auth-secret=${TURN_SECRET}
+      - --listening-port=3478
+      - --min-port=49160
+      - --max-port=49260
+      - --fingerprint
+      - --no-cli
+      - --no-tls
+      - --no-dtls
+      - --no-multicast-peers
+      # never let the relay reach private/internal addresses of the server's network
+      - --denied-peer-ip=0.0.0.0-0.255.255.255
+      - --denied-peer-ip=10.0.0.0-10.255.255.255
+      - --denied-peer-ip=100.64.0.0-100.127.255.255
+      - --denied-peer-ip=127.0.0.0-127.255.255.255
+      - --denied-peer-ip=169.254.0.0-169.254.255.255
+      - --denied-peer-ip=172.16.0.0-172.31.255.255
+      - --denied-peer-ip=192.168.0.0-192.168.255.255
+      # If your server is behind NAT (for example some clouds), also add:  - --external-ip=YOUR_PUBLIC_IP
+
+volumes:
+  app-data:
+  caddy-data:
+  caddy-config:

@@ -1,0 +1,27 @@
+# OPTIONAL: large calls (more people than the peer-to-peer limit) through a LiveKit media server (SFU).
+# Use together with the main file:   docker compose -f docker-compose.yml -f docker-compose.livekit.yml up -d --build
+# UNVERIFIED: written without Docker, LiveKit or internet available. Read deploy/README.md first.
+# Needs a SECOND domain name (LIVEKIT_DOMAIN) pointing at this server for the signalling connection (wss://).
+services:
+  app:
+    environment:
+      LIVEKIT_URL: wss://${LIVEKIT_DOMAIN:?Set LIVEKIT_DOMAIN in deploy/.env}
+      LIVEKIT_API_KEY: ${LIVEKIT_API_KEY:?Set LIVEKIT_API_KEY in deploy/.env}
+      LIVEKIT_API_SECRET: ${LIVEKIT_API_SECRET:?Set LIVEKIT_API_SECRET in deploy/.env}
+      MAX_LARGE_PARTICIPANTS: ${MAX_LARGE_PARTICIPANTS:-12}
+
+  livekit:
+    image: livekit/livekit-server:latest
+    restart: unless-stopped
+    network_mode: host
+    command: --config /etc/livekit.yaml
+    environment:
+      LIVEKIT_KEYS: "${LIVEKIT_API_KEY}: ${LIVEKIT_API_SECRET}"
+    volumes:
+      - ./livekit.yaml:/etc/livekit.yaml:ro
+
+  caddy:
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ./Caddyfile.livekit:/etc/caddy/Caddyfile:ro

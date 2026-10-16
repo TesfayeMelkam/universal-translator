@@ -1,0 +1,22 @@
+[
+ {
+  "code": "en",
+  "name": "English",
+  "draft": false
+ },
+ {
+  "code": "am",
+  "name": "አማርኛ",
+  "draft": false
+ },
+ {
+  "code": "om",
+  "name": "Afaan Oromoo",
+  "draft": true
+ },
+ {
+  "code": "ti",
+  "name": "ትግርኛ",
+  "draft": true
+ }
+]

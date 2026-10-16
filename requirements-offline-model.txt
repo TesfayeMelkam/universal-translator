@@ -1,0 +1,4 @@
+# Offline translation model (NLLB). Large download (~3 GB model + PyTorch). Optional.
+transformers>=4.40
+torch>=2.2
+sentencepiece>=0.2

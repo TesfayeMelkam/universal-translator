@@ -1,0 +1,21 @@
+{
+ "tab.text": "ጽሑፍ",
+ "tab.voice": "ድምጺ",
+ "tab.camera": "ካሜራ",
+ "tab.call": "ቪድዮ ጻውዒት",
+ "tab.docs": "ሰነዳት",
+ "tab.history": "ታሪኽ",
+ "tab.about": "ብዛዕባ",
+ "lang.from": "ካብ",
+ "lang.to": "ናብ",
+ "text.translate": "ተርጉም",
+ "text.clear": "ደምስስ",
+ "text.copy": "ቅዳሕ",
+ "text.share": "ኣካፍል",
+ "account.sign_in": "ኣተው",
+ "account.sign_out": "ወጻኢ",
+ "account.username": "ሽም ተጠቃሚ",
+ "account.cancel": "ሰርዝ",
+ "net.online": "ኣብ መስመር",
+ "net.offline": "ካብ መስመር ወጻኢ"
+}

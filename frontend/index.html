@@ -1,0 +1,275 @@
+<!doctype html>
+<html lang="en" data-theme="auto">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Universal Translator</title>
+  <meta name="theme-color" content="#4f46e5">
+  <link rel="manifest" href="/static/manifest.json">
+  <link rel="icon" href="/static/icons/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/static/icons/icon-192.png">
+  <link rel="stylesheet" href="/static/css/app.css">
+</head>
+<body>
+<a class="skip" href="#main" data-i18n="tab.text">Text</a>
+<header class="topbar">
+  <div class="brand"><span class="logo" aria-hidden="true">🌍</span> <span data-i18n="app.title">Universal Translator</span></div>
+  <div class="tools">
+    <select id="uiLang" aria-label="Interface language" data-i18n-aria="ui.language"></select>
+    <span id="netBadge" class="netbadge on" role="status">Online</span>
+    <button id="lowDataBtn" class="icon-btn" aria-pressed="false" title="Low-data mode" data-i18n-title="net.low">🐢</button>
+    <button id="installBtn" class="icon-btn" hidden title="Install app" data-i18n-title="net.install">⬇️</button>
+    <button id="accountBtn" class="pill" data-i18n="account.sign_in" hidden>Sign in</button>
+    <button id="themeBtn" class="icon-btn" aria-label="Toggle dark mode" data-i18n-aria="theme.toggle">🌓</button>
+  </div>
+  <nav class="tabs" role="tablist" aria-label="Sections">
+    <button role="tab" aria-selected="true" data-tab="text"><span aria-hidden="true">✍️</span> <span data-i18n="tab.text">Text</span></button>
+    <button role="tab" aria-selected="false" data-tab="voice"><span aria-hidden="true">🎙️</span> <span data-i18n="tab.voice">Voice</span></button>
+    <button role="tab" aria-selected="false" data-tab="talk"><span aria-hidden="true">💬</span> <span data-i18n="tab.talk">Talk</span></button>
+    <button role="tab" aria-selected="false" data-tab="camera"><span aria-hidden="true">📷</span> <span data-i18n="tab.camera">Camera</span></button>
+    <button role="tab" aria-selected="false" data-tab="call"><span aria-hidden="true">📹</span> <span data-i18n="tab.call">Video call</span></button>
+    <button role="tab" aria-selected="false" data-tab="docs"><span aria-hidden="true">📄</span> <span data-i18n="tab.docs">Documents</span></button>
+    <button role="tab" aria-selected="false" data-tab="subs"><span aria-hidden="true">🎞️</span> <span data-i18n="tab.subs">Subtitles</span></button>
+    <button role="tab" aria-selected="false" data-tab="history"><span aria-hidden="true">🕘</span> <span data-i18n="tab.history">History</span></button>
+    <button role="tab" aria-selected="false" data-tab="setup"><span aria-hidden="true">🛠️</span> <span data-i18n="tab.setup">Setup</span></button>
+    <button role="tab" aria-selected="false" data-tab="about"><span aria-hidden="true">ℹ️</span> <span data-i18n="tab.about">About</span></button>
+  </nav>
+</header>
+
+<main id="main">
+  <div id="banner" class="banner" role="status" hidden></div>
+
+  <section class="langbar card">
+    <label><span data-i18n="lang.from">From</span>
+      <select id="srcLang" aria-label="Source language"></select></label>
+    <button id="swapBtn" class="icon-btn" aria-label="Swap languages" data-i18n-aria="lang.swap" title="Swap">⇄</button>
+    <label><span data-i18n="lang.to">To</span>
+      <select id="tgtLang" aria-label="Target language"></select></label>
+    <input id="langSearch" type="search" placeholder="Search language…" data-i18n-ph="lang.search" aria-label="Search languages">
+  </section>
+
+  <!-- TEXT -->
+  <section id="tab-text" class="tabpanel card translator">
+    <div class="pane pane-in">
+      <textarea id="inputText" rows="5" maxlength="2000" placeholder="Type or paste text…" data-i18n-ph="text.placeholder" aria-label="Text to translate"></textarea>
+      <div id="detectChip" class="chip" hidden></div>
+      <div class="row between"><small id="counter">0 / 2000</small>
+        <div class="row">
+          <button id="dictBtn" class="btn"><span aria-hidden="true">🎙️</span> <span data-i18n="text.dictate">Dictate</span></button>
+          <button id="clearBtn" class="btn ghost" data-i18n="text.clear">Clear</button>
+          <button id="translateBtn" class="btn primary" data-i18n="text.translate">Translate</button>
+        </div></div>
+    </div>
+    <div class="pane pane-out">
+      <div id="outputBox" class="output" aria-live="polite"></div>
+      <div id="engineNote" class="engine-note" hidden></div>
+      <div class="row">
+        <button id="speakBtn" class="btn"><span aria-hidden="true">🔊</span> <span data-i18n="text.listen">Listen</span></button>
+        <button id="copyBtn" class="btn"><span aria-hidden="true">📋</span> <span data-i18n="text.copy">Copy</span></button>
+        <button id="shareBtn" class="btn"><span aria-hidden="true">📤</span> <span data-i18n="text.share">Share</span></button>
+        <label class="check"><input type="checkbox" id="autoSpeak"> <span data-i18n="text.autospeak">Auto-speak</span></label>
+        <label class="check"><input type="checkbox" id="liveTranslate"> <span data-i18n="text.live">Live</span></label>
+      </div>
+    </div>
+  </section>
+
+  <!-- VOICE -->
+  <section id="tab-voice" class="tabpanel card" hidden>
+    <p class="hint" data-i18n="voice.hint">Tap the mic, speak in the From language, and hear the translation.</p>
+    <button id="micBtn" class="mic" aria-label="Start listening">🎙️</button>
+    <div id="micStatus" class="status" data-i18n="voice.ready">Ready</div>
+    <button id="recServer" class="btn" hidden><span aria-hidden="true">⏺</span> <span data-i18n="voice.server">Record (server speech)</span></button>
+    <div class="label" data-i18n="voice.said">You said</div><div id="heard" class="output small"></div>
+    <div class="label" data-i18n="voice.translation">Translation</div><div id="voiceOut" class="output" aria-live="polite"></div>
+    <button id="voiceReplay" class="btn"><span aria-hidden="true">🔊</span> <span data-i18n="voice.replay">Play again</span></button>
+    <details class="voicebox">
+      <summary><span aria-hidden="true">🔧</span> <span data-i18n="voice.settings">Voice settings</span></summary>
+      <label><span data-i18n="voice.voice_for">Voice for the To language</span> <select id="voiceSel"></select></label>
+      <label><span data-i18n="voice.speed">Speed</span> <input type="range" id="rateRange" min="0.5" max="1.5" step="0.1" value="1"> <span id="rateVal">1.0×</span></label>
+      <div class="row"><button id="voiceTest" class="btn" data-i18n="voice.test">Test voice</button>
+        <button id="voiceCheck" class="btn" data-i18n="voice.which">Which languages have a voice?</button></div>
+      <div id="voiceReport" class="log"></div>
+      <p class="hint" data-i18n="voice.tip">Tip: Microsoft Edge usually lists extra online voices (including Amharic).</p>
+    </details>
+  </section>
+
+  <!-- TALK -->
+  <section id="tab-talk" class="tabpanel card" hidden>
+    <p class="hint" data-i18n="talk.hint">Two-person mode.</p>
+    <div class="talkgrid">
+      <button id="talkA" class="talk a"><span id="talkALabel">A</span><small data-i18n="talk.tap">tap &amp; speak</small></button>
+      <button id="talkB" class="talk b"><span id="talkBLabel">B</span><small data-i18n="talk.tap">tap &amp; speak</small></button>
+    </div>
+    <div id="talkLog" class="log" aria-live="polite"></div>
+  </section>
+
+  <!-- CAMERA -->
+  <section id="tab-camera" class="tabpanel card" hidden>
+    <p class="hint" data-i18n="camera.hint">Point at a sign, menu or page, or upload a photo.</p>
+    <div class="row">
+      <button id="camStart" class="btn primary"><span aria-hidden="true">📷</span> <span data-i18n="camera.open">Open camera</span></button>
+      <button id="camCapture" class="btn primary" hidden><span aria-hidden="true">⚪</span> <span data-i18n="camera.take">Take photo</span></button>
+      <label class="btn"><span aria-hidden="true">🖼️</span> <span data-i18n="camera.upload">Upload photo</span><input id="camFile" type="file" accept="image/png,image/jpeg,image/webp" hidden></label>
+    </div>
+    <video id="camVideo" class="cam" autoplay playsinline muted hidden></video>
+    <canvas id="camCanvas" hidden></canvas>
+    <img id="camPreview" class="cam" alt="Preview of the photo to translate" hidden>
+    <button id="camTranslate" class="btn primary" disabled data-i18n="camera.read">Read &amp; translate</button>
+    <canvas id="camResult" class="cam" hidden></canvas>
+    <button id="camDownload" class="btn" hidden data-i18n="camera.download">Download translated image</button>
+    <div class="label" data-i18n="camera.found">Text found</div><div id="camOriginal" class="output small"></div>
+    <div class="label" data-i18n="voice.translation">Translation</div><div id="camTranslation" class="output" aria-live="polite"></div>
+    <button id="camSpeak" class="btn"><span aria-hidden="true">🔊</span> <span data-i18n="text.listen">Listen</span></button>
+  </section>
+
+  <!-- VIDEO CALL -->
+  <section id="tab-call" class="tabpanel card" hidden>
+    <div id="callLobby">
+      <h2 data-i18n="call.title">Group video call with live translated captions</h2>
+      <p class="hint" data-i18n="call.hint">Several people, each in their own language.</p>
+      <div class="grid2">
+        <label><span data-i18n="call.my_lang">My language</span> <select id="callLang"></select></label>
+        <label><span data-i18n="call.my_name">My name</span> <input id="callName" maxlength="30" placeholder="Guest"></label>
+      </div>
+      <label class="check consent"><input type="checkbox" id="callConsent"> <span data-i18n="call.consent">I understand how the call works.</span></label>
+      <label class="check"><input type="checkbox" id="callAudioOnly"> <span data-i18n="call.audio_only">Audio only (saves data)</span></label>
+      <div class="row">
+        <button id="callCreate" class="btn primary"><span aria-hidden="true">➕</span> <span data-i18n="call.start">Start a new call</span></button>
+        <button id="callCreateLarge" class="btn" hidden><span aria-hidden="true">👥</span> <span data-i18n="call.start_large">Start a large call</span></button>
+        <input id="callCode" class="code" placeholder="ROOM CODE" data-i18n-ph="call.code" maxlength="6" autocapitalize="characters" aria-label="Room code">
+        <button id="callJoin" class="btn" data-i18n="call.join">Join</button>
+      </div>
+      <div class="row netcheck">
+        <button id="callNetCheck" class="btn ghost"><span aria-hidden="true">🌐</span> <span data-i18n="call.check">Check my connection</span></button>
+        <span id="netResult" class="hint" aria-live="polite"></span>
+      </div>
+      <div id="secureWarn" class="banner" hidden>This page is not on a secure address, so the browser blocks the camera. Open it as <b>http://127.0.0.1:8000</b> on this PC, or use HTTPS (see README → Video calls).</div>
+    </div>
+
+    <div id="callStage" hidden>
+      <div class="row between callbar">
+        <span id="callStatus" class="status">Connecting…</span>
+        <span class="row">Room <b id="callRoom"></b>
+          <button id="callCopy" class="btn ghost"><span aria-hidden="true">🔗</span> <span data-i18n="call.copy_link">Copy invite link</span></button></span>
+      </div>
+      <div id="videoGrid" class="videos" data-n="0">
+        <div id="localTile" class="tile local"><video id="localVideo" autoplay playsinline muted></video><div class="vlabel">You</div></div>
+        <div id="waitMsg" class="wait"><span data-i18n="call.waiting">Waiting for others to join…</span><br><small>Send them the invite link</small></div>
+        <div id="capOverlay" class="captions" aria-live="polite"></div>
+      </div>
+      <div class="controls">
+        <button id="cMic" class="cbtn" title="Mute / unmute microphone" aria-label="Microphone">🎤</button>
+        <button id="cCam" class="cbtn" title="Camera on / off" aria-label="Camera">📷</button>
+        <button id="cCap" class="cbtn" title="Show captions on screen" aria-label="Captions">💬</button>
+        <button id="cSay" class="cbtn" title="Read other people's captions aloud (use headphones)" aria-label="Read captions aloud">🔊</button>
+        <button id="cLeave" class="cbtn leave" title="Leave call" aria-label="Leave call">📞</button>
+      </div>
+      <p class="hint small">🎧 Use headphones if you turn on “read aloud”, otherwise the microphone hears the speaker and repeats it.</p>
+      <details><summary data-i18n="call.transcript">Transcript (kept only on this screen)</summary>
+        <div id="callLog" class="log"></div>
+        <button id="callSave" class="btn" data-i18n="call.save">Save transcript</button>
+      </details>
+    </div>
+  </section>
+
+  <!-- DOCUMENTS -->
+  <section id="tab-docs" class="tabpanel card" hidden>
+    <h2 data-i18n="docs.title">Translate a document</h2>
+    <p class="hint" data-i18n="docs.hint">Choose a file; its structure is kept.</p>
+    <div id="docDrop" class="drop" tabindex="0">
+      <label class="btn"><span aria-hidden="true">📄</span> <span data-i18n="docs.choose">Choose file</span>
+        <input id="docFile" type="file" accept=".txt,.md,.srt,.vtt,.docx,.pdf" hidden></label>
+      <span class="hint" data-i18n="docs.drop">or drop a file here</span>
+      <div id="docName" class="status"></div>
+    </div>
+    <button id="docTranslate" class="btn primary" disabled data-i18n="docs.translate">Translate document</button>
+    <div id="docStatus" class="status" aria-live="polite"></div>
+    <p class="hint small" data-i18n="docs.pdf_note">A PDF becomes a translated .txt file; page layout is not kept.</p>
+  </section>
+
+  <!-- SUBTITLES -->
+  <section id="tab-subs" class="tabpanel card" hidden>
+    <h2 data-i18n="subs.title">Subtitles from audio or video</h2>
+    <p class="hint" data-i18n="subs.hint">Choose an audio or video file and the language spoken in it.</p>
+    <div id="subDrop" class="drop" tabindex="0">
+      <label class="btn"><span aria-hidden="true">🎞️</span> <span data-i18n="docs.choose">Choose file</span>
+        <input id="subFile" type="file" accept="audio/*,video/*,.mp3,.wav,.m4a,.mp4,.mkv,.webm,.ogg" hidden></label>
+      <div id="subName" class="status"></div>
+    </div>
+    <button id="subStart" class="btn primary" disabled data-i18n="subs.start">Create subtitles</button>
+    <progress id="subProgress" max="100" value="0" hidden></progress>
+    <div id="subStatus" class="status" aria-live="polite"></div>
+    <div class="row"><button id="subDownload" class="btn" hidden data-i18n="subs.download">Download (.srt)</button>
+      <button id="subDownloadSrc" class="btn ghost" hidden data-i18n="subs.download_src">Download original (.srt)</button></div>
+  </section>
+
+  <!-- HISTORY -->
+  <section id="tab-history" class="tabpanel card" hidden>
+    <div class="row between"><h2 data-i18n="history.title">History</h2><button id="clearHistory" class="btn ghost" data-i18n="history.delete_all">Delete all</button></div>
+    <div id="historyList" class="log"></div>
+  </section>
+
+  <!-- SETUP -->
+  <section id="tab-setup" class="tabpanel card" hidden>
+    <h2 data-i18n="setup.title">Setup and translation quality</h2>
+    <div id="setupInfo" class="log"></div>
+
+    <div class="section"><h3 data-i18n="setup.engines">Translation engines</h3>
+      <div id="engineList" class="log"></div></div>
+
+    <div class="section"><h3 data-i18n="data.title">Your data (phrasebook)</h3>
+      <p class="hint" data-i18n="data.note">Phrases you add here are used before any engine.</p>
+      <div class="form">
+        <label><span data-i18n="lang.from">From</span><select id="pbSrc"></select></label>
+        <label><span data-i18n="lang.to">To</span><select id="pbTgt"></select></label>
+        <label><span data-i18n="data.phrase">Phrase</span><input id="pbText" type="text" maxlength="500"></label>
+        <label><span data-i18n="data.translation">Translation</span><input id="pbTr" type="text" maxlength="500"></label>
+        <div class="row wide">
+          <button id="pbAdd" class="btn primary" data-i18n="data.add">Add phrase</button>
+          <label class="btn"><span data-i18n="data.import">Import CSV / JSON file</span><input id="pbFile" type="file" accept=".csv,.json,text/csv,application/json" hidden></label>
+          <button id="pbExport" class="btn" data-i18n="data.export">Download phrasebook</button>
+          <button id="pbSync" class="btn" data-i18n="data.sync">Sync cloud data now</button>
+        </div>
+      </div>
+      <div id="dataStatus" class="log" aria-live="polite"></div></div>
+
+    <div class="section"><h3 data-i18n="connect.title">Connect other systems</h3>
+      <p class="hint" data-i18n="connect.note">Other apps can use this translator over HTTP.</p>
+      <pre id="apiExample" class="code"></pre></div>
+
+    <div class="section"><h3 data-i18n="setup.quality">Quality check</h3>
+      <p class="hint" data-i18n="setup.note">This measures round-trip consistency.</p>
+      <div id="selfTestLangs" class="row"></div>
+      <p><button id="runSelfTest" class="btn primary" data-i18n="setup.run">Run quality check</button></p>
+      <div id="selfTestResult" class="log" aria-live="polite"></div></div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="tab-about" class="tabpanel card" hidden>
+    <h2 data-i18n="about.title">About &amp; honest limits</h2>
+    <div id="aboutInfo"></div>
+    <ul>
+      <li data-i18n="about.speech">Speech and voices use your browser.</li>
+      <li data-i18n="about.mock">Mock mode only knows a few greetings.</li>
+      <li data-i18n="about.errors">Translations can be wrong.</li>
+      <li data-i18n="about.local">History is stored on the computer running this app.</li>
+      <li data-i18n="about.privacy">Online engines receive the text you translate.</li>
+    </ul>
+  </section>
+</main>
+
+<dialog id="loginDialog" class="dlg">
+  <h2 id="loginTitle" data-i18n="account.sign_in">Sign in</h2>
+  <label><span data-i18n="account.username">Username</span> <input id="loginUser" autocomplete="username" maxlength="32"></label>
+  <label><span data-i18n="account.password">Password</span> <input id="loginPass" type="password" autocomplete="current-password" maxlength="200"></label>
+  <div id="loginMsg" class="err" role="alert"></div>
+  <div class="row">
+    <button id="loginSubmit" class="btn primary" data-i18n="account.sign_in">Sign in</button>
+    <button id="loginRegister" class="btn" data-i18n="account.create">Create account</button>
+    <button id="loginCancel" class="btn ghost" data-i18n="account.cancel">Cancel</button>
+  </div>
+</dialog>
+
+<script src="/static/js/app.js" type="module"></script>
+</body>
+</html>
